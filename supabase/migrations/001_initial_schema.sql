@@ -109,6 +109,22 @@ CREATE TABLE IF NOT EXISTS loyalty_transactions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS shifts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    branch_id UUID REFERENCES branches(id) ON DELETE CASCADE,
+    cashier_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+    shift_number VARCHAR(50) UNIQUE NOT NULL,
+    status shift_status DEFAULT 'open',
+    opening_balance DECIMAL(12, 2) NOT NULL,
+    closing_balance DECIMAL(12, 2),
+    expected_balance DECIMAL(12, 2),
+    discrepancy_amount DECIMAL(12, 2),
+    discrepancy_notes TEXT,
+    opened_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    closed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_number VARCHAR(50) UNIQUE NOT NULL,
@@ -143,22 +159,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     unit_price DECIMAL(12, 2) NOT NULL,
     subtotal DECIMAL(12, 2) NOT NULL,
     item_notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS shifts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    branch_id UUID REFERENCES branches(id) ON DELETE CASCADE,
-    cashier_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
-    shift_number VARCHAR(50) UNIQUE NOT NULL,
-    status shift_status DEFAULT 'open',
-    opening_balance DECIMAL(12, 2) NOT NULL,
-    closing_balance DECIMAL(12, 2),
-    expected_balance DECIMAL(12, 2),
-    discrepancy_amount DECIMAL(12, 2),
-    discrepancy_notes TEXT,
-    opened_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    closed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
