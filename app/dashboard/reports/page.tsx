@@ -11,6 +11,10 @@ export default function ReportsPage() {
   const [error, setError] = useState('')
 
   const exportToExcel = async (reportType: string) => {
+    if (!supabase) {
+      setError('Supabase belum terkoneksi')
+      return
+    }
     setLoading(true)
     setError('')
     

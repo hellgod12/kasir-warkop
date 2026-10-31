@@ -82,7 +82,7 @@ export default function NewProductPage() {
       
       // Auto-select first branch if available
       if (data && data.length > 0) {
-        setFormData(prev => ({ ...prev, branch_id: data[0].id }))
+        setFormData(prev => ({ ...prev, branch_id: (data[0] as any).id }))
       }
     } catch (err) {
       console.error('Error fetching branches:', err)
