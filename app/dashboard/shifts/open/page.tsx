@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -11,16 +11,46 @@ export default function OpenShiftPage() {
   const [openingBalance, setOpeningBalance] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [userProfile, setUserProfile] = useState<any>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted) fetchUserProfile()
+  }, [mounted])
+
+  const fetchUserProfile = async () => {
+    if (!supabase) return
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        setUserProfile(profile)
+      }
+    } catch (err) {
+      console.error('Error fetching user profile:', err)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) return
+    if (!userProfile) {
+      setError('User profile tidak ditemukan')
+      return
+    }
     
     setLoading(true)
     try {
       const { error } = await supabase.from('shifts').insert({
-        branch_id: 'placeholder',
-        cashier_id: 'placeholder',
+        branch_id: userProfile.branch_id,
+        cashier_id: userProfile.id,
         shift_number: `SHIFT-${Date.now()}`,
         status: 'open',
         opening_balance: parseFloat(openingBalance),
@@ -57,7 +87,7 @@ export default function OpenShiftPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg"
+              className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg disabled:opacity-50"
             >
               {loading ? 'Loading...' : 'Buka Shift'}
             </button>
