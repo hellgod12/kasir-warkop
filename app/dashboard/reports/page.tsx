@@ -11,10 +11,6 @@ export default function ReportsPage() {
   const [error, setError] = useState('')
 
   const exportToExcel = async (reportType: string) => {
-    if (!supabase) {
-      setError('Supabase belum terkoneksi. Setup environment variables terlebih dahulu.')
-      return
-    }
     setLoading(true)
     setError('')
     
@@ -23,7 +19,8 @@ export default function ReportsPage() {
       let fileName = ''
       
       if (reportType === 'sales') {
-        const { data: orders } = await supabase.from('orders').select('*')
+        const { data: orders, error } = await supabase.from('orders').select('*')
+        if (error) throw error
         data = (orders || []).map((o: any) => ({
           'Order #': o.order_number || '',
           'Total': o.total_amount || 0,
@@ -33,7 +30,8 @@ export default function ReportsPage() {
         }))
         fileName = 'Laporan_Penjualan.xlsx'
       } else if (reportType === 'inventory') {
-        const { data: products } = await supabase.from('products').select('*')
+        const { data: products, error } = await supabase.from('products').select('*')
+        if (error) throw error
         data = (products || []).map((p: any) => ({
           'Nama': p.name || '',
           'Harga': p.price || 0,
@@ -43,7 +41,8 @@ export default function ReportsPage() {
         }))
         fileName = 'Laporan_Stok.xlsx'
       } else if (reportType === 'orders') {
-        const { data: orders } = await supabase.from('orders').select('*')
+        const { data: orders, error } = await supabase.from('orders').select('*')
+        if (error) throw error
         data = (orders || []).map((o: any) => ({
           'Order #': o.order_number || '',
           'Total': o.total_amount || 0,
@@ -56,7 +55,7 @@ export default function ReportsPage() {
       }
       
       if (data.length === 0) {
-        setError('Tidak ada data untuk diexport')
+        setError('Tidak ada data untuk diexport. Tambahkan data terlebih dahulu.')
         return
       }
       
@@ -68,7 +67,7 @@ export default function ReportsPage() {
       setError('Export berhasil! File: ' + fileName)
     } catch (err: any) {
       console.error(err)
-      setError('Error exporting: ' + err.message)
+      setError('Error: ' + err.message)
     } finally {
       setLoading(false)
     }
