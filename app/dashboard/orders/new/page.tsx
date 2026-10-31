@@ -118,9 +118,12 @@ export default function NewOrderPage() {
     setLoading(true)
     
     try {
+      const orderNumber = `ORD-${Date.now()}`
+      
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
+          order_number: orderNumber,
           branch_id: profile.branch_id,
           cashier_id: profile.id,
           subtotal: calculation.subtotal,
