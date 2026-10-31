@@ -44,6 +44,9 @@ export default function BranchesPage() {
     if (!error) {
       setNewBranchName('')
       fetchBranches()
+      alert('Cabang berhasil ditambahkan!')
+    } else {
+      alert('Error: ' + error.message)
     }
     setLoading(false)
   }

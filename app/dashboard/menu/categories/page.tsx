@@ -44,6 +44,9 @@ export default function CategoriesPage() {
     if (!error) {
       setNewCategoryName('')
       fetchCategories()
+      alert('Kategori berhasil ditambahkan!')
+    } else {
+      alert('Error: ' + error.message)
     }
     setLoading(false)
   }

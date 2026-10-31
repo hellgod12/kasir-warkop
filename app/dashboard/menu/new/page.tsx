@@ -150,9 +150,11 @@ export default function NewProductPage() {
       
       if (error) throw error
       
+      alert('Produk berhasil ditambahkan!')
       router.push('/dashboard/menu')
     } catch (err: any) {
       setError(err.message)
+      alert('Error: ' + err.message)
     } finally {
       setLoading(false)
     }
