@@ -10,6 +10,7 @@ export default function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
+    { href: '/dashboard/branches', label: 'Cabang' },
     { href: '/dashboard/menu', label: 'Menu' },
     { href: '/dashboard/menu/categories', label: 'Kategori' },
     { href: '/dashboard/orders/new', label: 'POS' },

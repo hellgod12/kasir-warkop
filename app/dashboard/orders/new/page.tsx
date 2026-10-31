@@ -5,9 +5,11 @@ import { createClient } from '@/lib/supabase/client'
 import type { Product } from '@/types/database'
 import { calculateTotal, calculateChange, type CartItem } from '@/lib/calculations/cart'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth/auth-context'
 
 export default function NewOrderPage() {
   const router = useRouter()
+  const { profile } = useAuth()
   const supabase = createClient()
   
   const [products, setProducts] = useState<Product[]>([])
@@ -76,8 +78,8 @@ export default function NewOrderPage() {
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
-          branch_id: 'default-branch-id', // TODO: Get from user session
-          cashier_id: 'default-cashier-id', // TODO: Get from user session
+          branch_id: profile?.branch_id || null,
+          cashier_id: profile?.id || null,
           subtotal: calculation.subtotal,
           discount_amount: calculation.discountAmount,
           tax_amount: calculation.taxAmount,

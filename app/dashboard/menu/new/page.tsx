@@ -1,19 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { ProductInsert, Category } from '@/types/database'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth/auth-context'
 
 export default function NewProductPage() {
   const router = useRouter()
+  const { profile } = useAuth()
   const supabase = createClient()
   
   const [formData, setFormData] = useState<ProductInsert>({
     name: '',
     description: '',
     category_id: '',
-    branch_id: '', // Harus diisi nanti setelah cabang dibuat
+    branch_id: profile?.branch_id || '',
     price: 0,
     cost_price: 0,
     stock: 0,
