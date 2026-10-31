@@ -13,12 +13,15 @@ export default function NewOrderPage() {
   const supabase = createClient()
   
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [selectedCategory, setSelectedCategory] = useState('')
   const [cart, setCart] = useState<CartItem[]>([])
   const [paidAmount, setPaidAmount] = useState(0)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetchProducts()
+    fetchCategories()
   }, [])
 
   const fetchProducts = async () => {
@@ -28,6 +31,15 @@ export default function NewOrderPage() {
       .eq('is_active', true)
       .order('name')
     setProducts(data || [])
+  }
+
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order')
+    setCategories(data || [])
   }
 
   const addToCart = (product: Product) => {
@@ -135,8 +147,27 @@ export default function NewOrderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Product Grid */}
           <div className="lg:col-span-2">
+            <div className="mb-4 flex gap-2 overflow-x-auto">
+              <button
+                onClick={() => setSelectedCategory('')}
+                className={`px-4 py-2 rounded ${!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              >
+                Semua
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-4 py-2 rounded ${selectedCategory === cat.id ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {products.map((product) => (
+              {products
+                .filter(p => !selectedCategory || p.category_id === selectedCategory)
+                .map((product) => (
                 <div
                   key={product.id}
                   onClick={() => addToCart(product)}
