@@ -1,0 +1,41 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/lib/auth/auth-context'
+
+export default function Sidebar() {
+  const pathname = usePathname()
+  const { profile } = useAuth()
+
+  const navItems = [
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/dashboard/menu', label: 'Menu' },
+    { href: '/dashboard/menu/categories', label: 'Kategori' },
+    { href: '/dashboard/orders/new', label: 'POS' },
+    { href: '/dashboard/orders', label: 'Pesanan' },
+  ]
+
+  return (
+    <div className="w-64 bg-gray-900 min-h-screen p-4">
+      <h1 className="text-white text-xl font-bold mb-8">Warkop POS</h1>
+      <nav className="space-y-2">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`block px-4 py-2 rounded-lg text-white hover:bg-gray-800 ${
+              pathname === item.href ? 'bg-gray-800' : ''
+            }`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+      <div className="mt-8 pt-8 border-t border-gray-700">
+        <p className="text-gray-400 text-sm">{profile?.full_name}</p>
+        <p className="text-gray-500 text-xs">{profile?.role}</p>
+      </div>
+    </div>
+  )
+}
