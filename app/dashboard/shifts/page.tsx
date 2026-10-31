@@ -70,7 +70,7 @@ export default function ShiftsPage() {
                 const closeTime = closeDate ? closeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'
                 
                 return (
-                  <tr key={shift.id} className="hover:bg-gray-50">
+                  <tr key={shift.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/dashboard/shifts/${shift.id}`)}>
                     <td className="px-6 py-4">{shift.shift_number}</td>
                     <td className="px-6 py-4">{dateStr}</td>
                     <td className="px-6 py-4">{openTime}</td>
