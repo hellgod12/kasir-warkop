@@ -1,15 +1,20 @@
 'use client'
 
 // @ts-nocheck
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import * as XLSX from 'xlsx'
 
 export default function ReportsPage() {
   const [mounted, setMounted] = useState(false)
-  const supabase = mounted ? createClient() : null
+  const [supabase, setSupabase] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    setMounted(true)
+    setSupabase(createClient())
+  }, [])
 
   const exportToExcel = async (reportType: string) => {
     setLoading(true)
