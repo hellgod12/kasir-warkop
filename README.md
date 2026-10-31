@@ -30,11 +30,11 @@ Sistem kasir warkop enterprise-grade dengan Next.js, Supabase, dan Vercel.
 ## ⏳ Fitur yang Belum Selesai (Tier 2 & 3):
 
 ### Tier 2 (Important):
-- ⏳ Discount & Promo System
+- ⏳ Discount & Promo System (placeholder page sudah ada, perlu implementasi CRUD)
 - ⏳ Supplier Management
 - ⏳ Advanced Inventory (alerts, COGS, wastage)
 - ⏳ Audit Trail
-- ⏳ Shift Transaction Details (list transaksi per shift)
+- ⏳ Shift Transaction Details (perlu implementasi modal atau dynamic route dengan Suspense)
 
 ### Tier 3 (Nice to Have):
 - ⏳ Delivery Management
