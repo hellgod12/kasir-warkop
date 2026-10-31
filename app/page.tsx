@@ -6,26 +6,24 @@ import { useAuth } from '@/lib/auth/auth-context'
 
 export default function Home() {
   const router = useRouter()
-  const { user, loading } = useAuth()
-  const [isTimedOut, setIsTimedOut] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const auth = mounted ? useAuth() : null
+  const user = auth?.user || null
+  const loading = auth?.loading || true
 
   useEffect(() => {
-    // Timeout setelah 2 detik jika loading masih true
-    const timer = window.setTimeout(() => {
-      setIsTimedOut(true)
-    }, 2000)
-    return () => window.clearTimeout(timer)
+    setMounted(true)
   }, [])
 
   useEffect(() => {
-    if (!loading || isTimedOut) {
+    if (mounted && !loading) {
       if (user) {
         router.push('/dashboard')
       } else {
         router.push('/auth/login')
       }
     }
-  }, [user, loading, isTimedOut, router])
+  }, [user, loading, router, mounted])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
