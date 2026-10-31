@@ -19,53 +19,121 @@ export default function DashboardPage() {
     await signOut()
   }
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+        <div className="text-center">
+          <div className="text-4xl mb-4">☕</div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Selamat datang, {profile?.full_name}!</p>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Selamat datang, {profile?.full_name || 'Admin'}!</p>
         </div>
         <button
           onClick={handleSignOut}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-md"
         >
-          Sign Out
+          Keluar
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Link href="/dashboard/branches" className="bg-orange-600 text-white p-6 rounded-lg shadow hover:bg-orange-700">
-          <h2 className="text-xl font-bold mb-2">🏢 Cabang</h2>
-          <p className="text-orange-100">Setup cabang dulu</p>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Link href="/dashboard/branches" className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+          <div className="text-4xl mb-3">🏢</div>
+          <h2 className="text-xl font-bold mb-1">Cabang</h2>
+          <p className="text-orange-100 text-sm">Setup cabang dulu</p>
         </Link>
 
-        <Link href="/dashboard/menu/categories" className="bg-purple-600 text-white p-6 rounded-lg shadow hover:bg-purple-700">
-          <h2 className="text-xl font-bold mb-2">🏷️ Kategori</h2>
-          <p className="text-purple-100">Tambah kategori</p>
+        <Link href="/dashboard/menu/categories" className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+          <div className="text-4xl mb-3">🏷️</div>
+          <h2 className="text-xl font-bold mb-1">Kategori</h2>
+          <p className="text-purple-100 text-sm">Tambah kategori</p>
         </Link>
 
-        <Link href="/dashboard/menu" className="bg-green-600 text-white p-6 rounded-lg shadow hover:bg-green-700">
-          <h2 className="text-xl font-bold mb-2">📋 Menu</h2>
-          <p className="text-green-100">Tambah produk</p>
+        <Link href="/dashboard/menu" className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+          <div className="text-4xl mb-3">📋</div>
+          <h2 className="text-xl font-bold mb-1">Menu</h2>
+          <p className="text-green-100 text-sm">Tambah produk</p>
         </Link>
 
-        <Link href="/dashboard/orders/new" className="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700">
-          <h2 className="text-xl font-bold mb-2">🛒 POS</h2>
-          <p className="text-blue-100">Buat pesanan</p>
+        <Link href="/dashboard/orders/new" className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+          <div className="text-4xl mb-3">🛒</div>
+          <h2 className="text-xl font-bold mb-1">POS</h2>
+          <p className="text-blue-100 text-sm">Buat pesanan</p>
         </Link>
       </div>
 
-      <div className="mt-8 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-4">Status Pengembangan</h2>
-        <div className="space-y-2">
-          <p className="text-green-600">✓ Initial setup selesai</p>
-          <p className="text-green-600">✓ Supabase integration</p>
-          <p className="text-green-600">✓ Auth system</p>
-          <p className="text-green-600">✓ Cart calculation</p>
-          <p className="text-green-600">✓ POS sederhana</p>
-          <p className="text-yellow-600">⏳ Need: Setup Supabase project</p>
-          <p className="text-gray-600">⏳ Fitur-fitur lanjutan</p>
+      {/* Status Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Status Pengembangan</h3>
+          <div className="space-y-3">
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Initial setup selesai</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Supabase integration</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Auth system</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Cart calculation</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>POS sederhana</span>
+            </div>
+            <div className="flex items-center text-amber-600">
+              <span className="text-xl mr-2">⏳</span>
+              <span>Need: Setup Supabase</span>
+            </div>
+            <div className="flex items-center text-gray-500">
+              <span className="text-xl mr-2">⏳</span>
+              <span>Fitur-fitur lanjutan</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
+              <span className="text-gray-700">Total Produk</span>
+              <span className="font-bold text-amber-600">0</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="text-gray-700">Total Orders</span>
+              <span className="font-bold text-green-600">0</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+              <span className="text-gray-700">Total Cabang</span>
+              <span className="font-bold text-blue-600">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-2xl shadow-lg">
+          <h3 className="text-lg font-bold mb-4">💡 Tips</h3>
+          <div className="space-y-3 text-sm">
+            <p>1. Setup cabang dulu sebelum tambah produk</p>
+            <p>2. Buat kategori untuk organisasi menu</p>
+            <p>3. Gambar produk akan tampil di POS</p>
+            <p>4. PPN otomatis 11% dihitung</p>
+          </div>
         </div>
       </div>
     </div>

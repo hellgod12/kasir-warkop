@@ -11,12 +11,6 @@ export default function NewOrderPage() {
   const [mounted, setMounted] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const supabase = mounted ? createClient() : null
-
-  useEffect(() => {
-    setMounted(true)
-    // For now, use a placeholder branch_id
-    setProfile({ branch_id: 'placeholder', id: 'placeholder' })
-  }, [])
   
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<any[]>([])
@@ -27,6 +21,7 @@ export default function NewOrderPage() {
 
   useEffect(() => {
     setMounted(true)
+    setProfile({ branch_id: 'placeholder', id: 'placeholder' })
   }, [])
 
   useEffect(() => {
@@ -101,7 +96,6 @@ export default function NewOrderPage() {
     setLoading(true)
     
     try {
-      // Create order
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -123,7 +117,6 @@ export default function NewOrderPage() {
       
       if (orderError) throw orderError
       
-      // Create order items
       const orderItems = cart.map(item => ({
         order_id: (orderData as any).id,
         product_id: item.productId,
@@ -151,10 +144,13 @@ export default function NewOrderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+      <header className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">POS - Buat Pesanan</h1>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <span className="text-3xl">☕</span>
+            POS - Buat Pesanan
+          </h1>
         </div>
       </header>
 
@@ -162,10 +158,14 @@ export default function NewOrderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Product Grid */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex gap-2 overflow-x-auto">
+            <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedCategory('')}
-                className={`px-4 py-2 rounded ${!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  !selectedCategory 
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md' 
+                    : 'bg-white text-gray-600 hover:bg-gray-100'
+                }`}
               >
                 Semua
               </button>
@@ -173,7 +173,11 @@ export default function NewOrderPage() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded ${selectedCategory === cat.id ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === cat.id
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
                   {cat.name}
                 </button>
@@ -186,51 +190,58 @@ export default function NewOrderPage() {
                 <div
                   key={product.id}
                   onClick={() => addToCart(product)}
-                  className="bg-white p-4 rounded-lg shadow cursor-pointer hover:shadow-md transition-shadow"
+                  className="bg-white p-4 rounded-2xl shadow-md cursor-pointer hover:shadow-xl transition-all hover:scale-105 border border-gray-100"
                 >
-                  <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-gray-600 text-sm">{product.description}</p>
+                  <div className="text-4xl mb-2">🍵</div>
+                  <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                  <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
                   <p className="text-lg font-bold text-green-600 mt-2">
                     Rp {product.price.toLocaleString('id-ID')}
                   </p>
-                  <p className="text-sm text-gray-500">Stok: {product.stock}</p>
+                  <p className="text-xs text-gray-500 mt-1">Stok: {product.stock}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Cart */}
-          <div className="bg-white p-6 rounded-lg shadow h-fit">
-            <h2 className="text-xl font-bold mb-4">Keranjang</h2>
+          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 h-fit sticky top-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span>🛒</span>
+              Keranjang
+            </h2>
             
             {cart.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">Keranjang kosong</p>
+              <div className="text-center py-8">
+                <div className="text-4xl mb-2">🛒</div>
+                <p className="text-gray-500">Keranjang kosong</p>
+              </div>
             ) : (
               <>
-                <div className="space-y-3 mb-4">
+                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
                   {cart.map((item) => (
-                    <div key={item.productId} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                      <div>
-                        <p className="font-medium">{item.productName}</p>
+                    <div key={item.productId} className="flex justify-between items-center p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{item.productName}</p>
                         <p className="text-sm text-gray-600">Rp {item.price.toLocaleString('id-ID')} x {item.quantity}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => updateQuantity(item.productId, -1)}
-                          className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300"
+                          className="w-8 h-8 bg-white rounded-lg hover:bg-gray-100 border border-gray-200 flex items-center justify-center font-bold"
                         >
                           -
                         </button>
-                        <span>{item.quantity}</span>
+                        <span className="w-8 text-center font-medium">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.productId, 1)}
-                          className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300"
+                          className="w-8 h-8 bg-white rounded-lg hover:bg-gray-100 border border-gray-200 flex items-center justify-center font-bold"
                         >
                           +
                         </button>
                         <button
                           onClick={() => removeFromCart(item.productId)}
-                          className="text-red-500 text-sm"
+                          className="text-red-500 text-sm hover:text-red-700 ml-2"
                         >
                           Hapus
                         </button>
@@ -239,32 +250,32 @@ export default function NewOrderPage() {
                   ))}
                 </div>
 
-                <div className="border-t pt-4 space-y-2">
-                  <div className="flex justify-between">
+                <div className="border-t-2 border-gray-100 pt-4 space-y-2">
+                  <div className="flex justify-between text-gray-600">
                     <span>Subtotal:</span>
                     <span>Rp {calculation.subtotal.toLocaleString('id-ID')}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-gray-600">
                     <span>PPN (11%):</span>
                     <span>Rp {calculation.taxAmount.toLocaleString('id-ID')}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-lg border-t pt-2">
+                  <div className="flex justify-between font-bold text-xl text-gray-900 border-t-2 border-gray-200 pt-2">
                     <span>Total:</span>
-                    <span>Rp {calculation.totalAmount.toLocaleString('id-ID')}</span>
+                    <span className="text-green-600">Rp {calculation.totalAmount.toLocaleString('id-ID')}</span>
                   </div>
                 </div>
 
                 <div className="mt-4 space-y-2">
-                  <label className="block text-sm font-medium">Jumlah Bayar:</label>
+                  <label className="block text-sm font-semibold text-gray-700">Jumlah Bayar:</label>
                   <input
                     type="number"
                     value={paidAmount}
                     onChange={(e) => setPaidAmount(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                     placeholder="Masukkan jumlah bayar"
                   />
                   {paidAmount > 0 && (
-                    <p className="text-green-600 font-medium">
+                    <p className="text-green-600 font-semibold text-lg">
                       Kembalian: Rp {change.toLocaleString('id-ID')}
                     </p>
                   )}
@@ -273,9 +284,9 @@ export default function NewOrderPage() {
                 <button
                   onClick={handleCheckout}
                   disabled={loading}
-                  className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
+                  className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 disabled:opacity-50 font-bold text-lg shadow-lg transition-all mt-4"
                 >
-                  {loading ? 'Memproses...' : 'Bayar'}
+                  {loading ? 'Memproses...' : 'Bayar Sekarang'}
                 </button>
               </>
             )}
