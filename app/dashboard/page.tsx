@@ -4,16 +4,41 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { signOut } from '@/app/auth/actions'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false)
   const auth = mounted ? useAuth() : null
   const user = auth?.user || null
   const profile = auth?.profile || null
+  const supabase = mounted ? createClient() : null
+  const [stats, setStats] = useState({ products: 0, orders: 0, branches: 0 })
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    if (mounted && supabase) fetchStats()
+  }, [mounted, supabase])
+
+  const fetchStats = async () => {
+    if (!supabase) return
+    try {
+      const [products, orders, branches] = await Promise.all([
+        supabase.from('products').select('id', { count: 'exact', head: true }),
+        supabase.from('orders').select('id', { count: 'exact', head: true }),
+        supabase.from('branches').select('id', { count: 'exact', head: true })
+      ])
+      setStats({
+        products: products.count || 0,
+        orders: orders.count || 0,
+        branches: branches.count || 0
+      })
+    } catch (err) {
+      console.error('Error fetching stats:', err)
+    }
+  }
 
   const handleSignOut = async () => {
     await signOut()
@@ -95,15 +120,23 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center text-green-600">
               <span className="text-xl mr-2">✓</span>
-              <span>POS sederhana</span>
+              <span>POS berfungsi</span>
             </div>
-            <div className="flex items-center text-amber-600">
-              <span className="text-xl mr-2">⏳</span>
-              <span>Need: Setup Supabase</span>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Excel export</span>
             </div>
-            <div className="flex items-center text-gray-500">
-              <span className="text-xl mr-2">⏳</span>
-              <span>Fitur-fitur lanjutan</span>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Shift management</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Tax settings</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <span className="text-xl mr-2">✓</span>
+              <span>Report generation</span>
             </div>
           </div>
         </div>
@@ -113,15 +146,15 @@ export default function DashboardPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
               <span className="text-gray-700">Total Produk</span>
-              <span className="font-bold text-amber-600">0</span>
+              <span className="font-bold text-amber-600">{stats.products}</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
               <span className="text-gray-700">Total Orders</span>
-              <span className="font-bold text-green-600">0</span>
+              <span className="font-bold text-green-600">{stats.orders}</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
               <span className="text-gray-700">Total Cabang</span>
-              <span className="font-bold text-blue-600">0</span>
+              <span className="font-bold text-blue-600">{stats.branches}</span>
             </div>
           </div>
         </div>

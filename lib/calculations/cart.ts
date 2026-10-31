@@ -32,7 +32,7 @@ export function calculateDiscount(
 export function calculateTax(
   subtotal: number,
   discountAmount: number,
-  taxRate: number = 11
+  taxRate: number = 0
 ): number {
   const taxableAmount = subtotal - discountAmount
   return taxableAmount * (taxRate / 100)

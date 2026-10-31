@@ -23,6 +23,7 @@ export default function ReportsPage() {
     try {
       let data: any[] = []
       let fileName = ''
+      let reportTitle = ''
       
       if (reportType === 'sales') {
         // @ts-ignore
@@ -36,6 +37,7 @@ export default function ReportsPage() {
           'Tipe': o.order_type || ''
         }))
         fileName = 'Laporan_Penjualan.xlsx'
+        reportTitle = 'LAPORAN PENJUALAN'
       } else if (reportType === 'inventory') {
         // @ts-ignore
         const { data: products, error } = await supabase.from('products').select('*')
@@ -48,6 +50,7 @@ export default function ReportsPage() {
           'Status': p.is_active ? 'Aktif' : 'Non-aktif'
         }))
         fileName = 'Laporan_Stok.xlsx'
+        reportTitle = 'LAPORAN STOK'
       } else if (reportType === 'orders') {
         // @ts-ignore
         const { data: orders, error } = await supabase.from('orders').select('*')
@@ -61,6 +64,7 @@ export default function ReportsPage() {
           'Tanggal': o.created_at ? new Date(o.created_at).toLocaleString('id-ID') : ''
         }))
         fileName = 'Laporan_Pesanan.xlsx'
+        reportTitle = 'LAPORAN PESANAN'
       }
       
       if (data.length === 0) {
@@ -68,7 +72,53 @@ export default function ReportsPage() {
         return
       }
       
-      const ws = XLSX.utils.json_to_sheet(data)
+      // Add title row
+      const titleRow = [[reportTitle, '', '', '', '']]
+      const dateRow = [['Tanggal Export:', new Date().toLocaleString('id-ID'), '', '', '']]
+      const emptyRow = [['', '', '', '', '']]
+      const headerRow = [Object.keys(data[0])]
+      const dataRows = data.map(row => Object.values(row))
+      
+      const wsData = [...titleRow, ...dateRow, ...emptyRow, ...headerRow, ...dataRows]
+      const ws = XLSX.utils.aoa_to_sheet(wsData)
+      
+      // Auto-width columns
+      const wscols = [
+        { wch: 20 }, // Order # / Nama
+        { wch: 15 }, // Total / Harga
+        { wch: 15 }, // Status / Stok
+        { wch: 25 }, // Tanggal / Kategori
+        { wch: 15 }, // Tipe / Status
+      ]
+      ws['!cols'] = wscols
+      
+      // Style header row (row 4, index 3)
+      const headerRowIndex = 3
+      for (let col = 0; col < headerRow[0].length; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: headerRowIndex, c: col })
+        if (!ws[cellAddress]) continue
+        ws[cellAddress].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'FFFFFF' }, bgColor: { rgb: 'D2691E' } },
+          alignment: { horizontal: 'center' }
+        }
+      }
+      
+      // Style title row
+      const titleCell = 'A1'
+      if (ws[titleCell]) {
+        ws[titleCell].s = {
+          font: { bold: true, sz: 16 },
+          fill: { fgColor: { rgb: 'FFFFFF' }, bgColor: { rgb: '8B4513' } },
+          alignment: { horizontal: 'center' }
+        }
+      }
+      
+      // Merge title cells
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }
+      ]
+      
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Report')
       XLSX.writeFile(wb, fileName)

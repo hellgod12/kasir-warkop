@@ -12,6 +12,7 @@ export default function BranchesPage() {
   const [branches, setBranches] = useState<Branch[]>([])
   const [newBranchName, setNewBranchName] = useState('')
   const [loading, setLoading] = useState(false)
+  const [duplicateError, setDuplicateError] = useState('')
 
   useEffect(() => {
     setMounted(true)
@@ -35,6 +36,13 @@ export default function BranchesPage() {
     if (!newBranchName.trim()) return
     if (!supabase) return
 
+    // Check duplicate
+    const exists = branches.some(b => b.name.toLowerCase() === newBranchName.toLowerCase())
+    if (exists) {
+      setDuplicateError('Cabang dengan nama ini sudah ada')
+      return
+    }
+
     setLoading(true)
     const { error } = await supabase.from('branches').insert({
       name: newBranchName,
@@ -43,6 +51,7 @@ export default function BranchesPage() {
     
     if (!error) {
       setNewBranchName('')
+      setDuplicateError('')
       fetchBranches()
       alert('Cabang berhasil ditambahkan!')
     } else {
@@ -58,11 +67,14 @@ export default function BranchesPage() {
       </div>
 
       <div className="bg-white p-6 rounded-2xl shadow-lg mb-6">
+        {duplicateError && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">{duplicateError}</div>
+        )}
         <form onSubmit={addBranch} className="flex gap-4">
           <input
             type="text"
             value={newBranchName}
-            onChange={(e) => setNewBranchName(e.target.value)}
+            onChange={(e) => { setNewBranchName(e.target.value); setDuplicateError('') }}
             placeholder="Nama cabang baru"
             className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
           />

@@ -49,38 +49,54 @@ export default function ShiftsPage() {
             <thead className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
               <tr>
                 <th className="px-6 py-3 text-left">No. Shift</th>
+                <th className="px-6 py-3 text-left">Tanggal</th>
+                <th className="px-6 py-3 text-left">Jam Buka</th>
+                <th className="px-6 py-3 text-left">Jam Tutup</th>
+                <th className="px-6 py-3 text-left">Durasi</th>
                 <th className="px-6 py-3 text-left">Status</th>
                 <th className="px-6 py-3 text-left">Modal Awal</th>
                 <th className="px-6 py-3 text-left">Modal Akhir</th>
                 <th className="px-6 py-3 text-left">Selisih</th>
-                <th className="px-6 py-3 text-left">Waktu Buka</th>
               </tr>
             </thead>
             <tbody className="divide-y">
-              {shifts.map((shift) => (
-                <tr key={shift.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">{shift.shift_number}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      shift.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {shift.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">Rp {shift.opening_balance.toLocaleString('id-ID')}</td>
-                  <td className="px-6 py-4">
-                    {shift.closing_balance ? `Rp ${shift.closing_balance.toLocaleString('id-ID')}` : '-'}
-                  </td>
-                  <td className="px-6 py-4">
-                    {shift.discrepancy_amount !== null && (
-                      <span className={shift.discrepancy_amount < 0 ? 'text-red-600' : 'text-green-600'}>
-                        Rp {shift.discrepancy_amount.toLocaleString('id-ID')}
+              {shifts.map((shift) => {
+                const openDate = new Date(shift.opened_at)
+                const closeDate = shift.closed_at ? new Date(shift.closed_at) : null
+                const duration = closeDate ? Math.floor((closeDate.getTime() - openDate.getTime()) / 3600000) : null
+                const hours = duration || 0
+                const dateStr = openDate.toLocaleDateString('id-ID')
+                const openTime = openDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+                const closeTime = closeDate ? closeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'
+                
+                return (
+                  <tr key={shift.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">{shift.shift_number}</td>
+                    <td className="px-6 py-4">{dateStr}</td>
+                    <td className="px-6 py-4">{openTime}</td>
+                    <td className="px-6 py-4">{closeTime}</td>
+                    <td className="px-6 py-4">{duration ? `${hours} jam` : '-'}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        shift.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {shift.status}
                       </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">{new Date(shift.opened_at).toLocaleString('id-ID')}</td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4">Rp {shift.opening_balance.toLocaleString('id-ID')}</td>
+                    <td className="px-6 py-4">
+                      {shift.closing_balance ? `Rp ${shift.closing_balance.toLocaleString('id-ID')}` : '-'}
+                    </td>
+                    <td className="px-6 py-4">
+                      {shift.discrepancy_amount !== null && (
+                        <span className={shift.discrepancy_amount < 0 ? 'text-red-600' : 'text-green-600'}>
+                          Rp {shift.discrepancy_amount.toLocaleString('id-ID')}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

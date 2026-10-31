@@ -102,7 +102,7 @@ export default function NewOrderPage() {
     }))
   }
 
-  const calculation = calculateTotal({ items: cart, taxRate: 11 })
+  const calculation = calculateTotal({ items: cart, taxRate: 0 })
   const change = calculateChange(calculation.totalAmount, paidAmount)
 
   const handleCheckout = async () => {

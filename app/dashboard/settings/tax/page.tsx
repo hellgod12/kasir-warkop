@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 export default function TaxSettingsPage() {
   const [mounted, setMounted] = useState(false)
   const supabase = mounted ? createClient() : null
-  const [ppnRate, setPpnRate] = useState(11)
+  const [ppnRate, setPpnRate] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
