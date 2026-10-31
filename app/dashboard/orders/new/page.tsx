@@ -109,6 +109,11 @@ export default function NewOrderPage() {
     if (cart.length === 0) return alert('Cart kosong!')
     if (paidAmount < calculation.totalAmount) return alert('Pembayaran kurang!')
     if (!supabase) return alert('Supabase not available')
+    if (!profile || !profile.branch_id) {
+      alert('Profile tidak ditemukan. Silakan login ulang.')
+      router.push('/auth/login')
+      return
+    }
     
     setLoading(true)
     
@@ -116,8 +121,8 @@ export default function NewOrderPage() {
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
-          branch_id: profile?.branch_id || null,
-          cashier_id: profile?.id || null,
+          branch_id: profile.branch_id,
+          cashier_id: profile.id,
           subtotal: calculation.subtotal,
           discount_amount: calculation.discountAmount,
           tax_amount: calculation.taxAmount,
