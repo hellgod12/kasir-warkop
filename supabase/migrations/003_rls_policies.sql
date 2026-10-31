@@ -4,6 +4,22 @@ ALTER TABLE branches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for Categories
+CREATE POLICY "Super admin full access categories" ON categories
+    FOR ALL USING (auth.jwt() ->> 'role' = 'super_admin');
+
+CREATE POLICY "Authenticated users can insert categories" ON categories
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update categories" ON categories
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete categories" ON categories
+    FOR DELETE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can read categories" ON categories
+    FOR SELECT USING (auth.role() = 'authenticated');
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
@@ -44,6 +60,15 @@ CREATE POLICY "Admin cabang read own branch" ON branches
         AND id = (SELECT branch_id FROM profiles WHERE id = auth.uid())
     );
 
+CREATE POLICY "Authenticated users can insert branches" ON branches
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update branches" ON branches
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete branches" ON branches
+    FOR DELETE USING (auth.role() = 'authenticated');
+
 -- RLS Policies for Profiles
 CREATE POLICY "Super admin full access profiles" ON profiles
     FOR ALL USING (auth.jwt() ->> 'role' = 'super_admin');
@@ -56,6 +81,12 @@ CREATE POLICY "Admin cabang read own branch profiles" ON profiles
 
 CREATE POLICY "Users can read own profile" ON profiles
     FOR SELECT USING (id = auth.uid());
+
+CREATE POLICY "Authenticated users can insert profiles" ON profiles
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update profiles" ON profiles
+    FOR UPDATE USING (auth.role() = 'authenticated');
 
 -- RLS Policies for Products
 CREATE POLICY "Super admin full access products" ON products
@@ -72,6 +103,15 @@ CREATE POLICY "Kasir read own branch products" ON products
         auth.jwt() ->> 'role' = 'kasir' 
         AND branch_id = (SELECT branch_id FROM profiles WHERE id = auth.uid())
     );
+
+CREATE POLICY "Authenticated users can insert products" ON products
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update products" ON products
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete products" ON products
+    FOR DELETE USING (auth.role() = 'authenticated');
 
 -- RLS Policies for Orders
 CREATE POLICY "Super admin full access orders" ON orders

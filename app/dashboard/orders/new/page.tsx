@@ -21,11 +21,11 @@ export default function NewOrderPage() {
 
   useEffect(() => {
     setMounted(true)
-    setProfile({ branch_id: 'placeholder', id: 'placeholder' })
   }, [])
 
   useEffect(() => {
     if (mounted) {
+      fetchUserProfile()
       fetchProducts()
       fetchCategories()
     }
@@ -49,6 +49,23 @@ export default function NewOrderPage() {
       .eq('is_active', true)
       .order('display_order')
     setCategories(data || [])
+  }
+
+  const fetchUserProfile = async () => {
+    if (!supabase) return
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        setProfile(profile)
+      }
+    } catch (err) {
+      console.error('Error fetching user profile:', err)
+    }
   }
 
   const addToCart = (product: Product) => {
