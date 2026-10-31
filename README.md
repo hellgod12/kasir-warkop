@@ -130,7 +130,7 @@ https://github.com/hellgod12/kasir-warkop
 
 ## 🔄 Perhitungan Otomatis:
 - Subtotal = Σ(harga × quantity)
-- PPN (11%) = (subtotal - discount) × 11%
+- PPN (default 0%, bisa diatur di settings) = (subtotal - discount) × taxRate%
 - Total = subtotal - discount + PPN
 - Kembalian = paid_amount - total
 
