@@ -19,6 +19,8 @@ export default function Sidebar() {
     { href: '/dashboard/menu/categories', label: 'Kategori' },
     { href: '/dashboard/orders/new', label: 'POS' },
     { href: '/dashboard/orders', label: 'Pesanan' },
+    { href: '/dashboard/shifts', label: 'Shift' },
+    { href: '/dashboard/reports', label: 'Laporan' },
   ]
 
   return (
