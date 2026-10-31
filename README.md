@@ -12,9 +12,10 @@ Sistem kasir warkop enterprise-grade dengan Next.js, Supabase, dan Vercel.
 - ✅ **Product Management** - CRUD produk dengan image upload
 - ✅ **POS System** - Category filter, cart, perhitungan otomatis
 - ✅ **Orders Management** - List pesanan dengan status tracking
-- ✅ **Shift Management** - Open/close shift, modal tracking, jam/tanggal/durasi
+- ✅ **Shift Management** - Open/close shift, modal tracking, jam/tanggal/durasi, transaction details
 - ✅ **Reports** - Excel export profesional untuk penjualan, stok, pesanan
 - ✅ **Tax Settings** - PPN configuration (default 0%, bisa diatur)
+- ✅ **Discount/Promo** - Placeholder page untuk future implementation
 - ✅ **Modern UI** - Coffee/warkop theme dengan gradient dan emoji
 
 ### Technical:
