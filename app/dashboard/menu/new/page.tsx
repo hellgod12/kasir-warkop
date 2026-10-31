@@ -24,6 +24,7 @@ export default function NewProductPage() {
   })
   
   const [categories, setCategories] = useState<Category[]>([])
+  const [branches, setBranches] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -35,17 +36,57 @@ export default function NewProductPage() {
   }, [])
 
   useEffect(() => {
-    if (mounted) fetchCategories()
+    if (mounted) {
+      fetchCategories()
+      fetchBranches()
+    }
   }, [mounted])
 
   const fetchCategories = async () => {
     if (!supabase) return
-    const { data } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order')
-    setCategories(data || [])
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('display_order')
+      
+      if (error) {
+        console.error('Error fetching categories:', error)
+        setError('Gagal mengambil kategori: ' + error.message)
+        return
+      }
+      
+      setCategories(data || [])
+      console.log('Categories loaded:', data?.length, 'items')
+    } catch (err) {
+      console.error('Error fetching categories:', err)
+      setError('Gagal mengambil kategori')
+    }
+  }
+
+  const fetchBranches = async () => {
+    if (!supabase) return
+    try {
+      const { data, error } = await supabase
+        .from('branches')
+        .select('*')
+        .eq('is_active', true)
+      
+      if (error) {
+        console.error('Error fetching branches:', error)
+        return
+      }
+      
+      setBranches(data || [])
+      console.log('Branches loaded:', data?.length, 'items')
+      
+      // Auto-select first branch if available
+      if (data && data.length > 0) {
+        setFormData(prev => ({ ...prev, branch_id: data[0].id }))
+      }
+    } catch (err) {
+      console.error('Error fetching branches:', err)
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,6 +242,25 @@ export default function NewProductPage() {
                 rows={3}
                 placeholder="Deskripsi produk (opsional)"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cabang *
+              </label>
+              <select
+                required
+                value={formData.branch_id || ''}
+                onChange={(e) => setFormData({ ...formData, branch_id: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Pilih cabang</option>
+                {branches.map((branch) => (
+                  <option key={branch.id} value={branch.id}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
