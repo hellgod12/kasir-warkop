@@ -19,15 +19,34 @@ export default function ReportsPage() {
       
       if (reportType === 'sales') {
         const { data: orders } = await supabase.from('orders').select('*')
-        data = orders || []
+        data = (orders || []).map(o => ({
+          'Order #': o.order_number,
+          'Total': o.total_amount,
+          'Status': o.status,
+          'Tanggal': new Date(o.created_at).toLocaleString('id-ID'),
+          'Tipe': o.order_type
+        }))
         fileName = 'Laporan_Penjualan.xlsx'
       } else if (reportType === 'inventory') {
         const { data: products } = await supabase.from('products').select('*')
-        data = products || []
+        data = (products || []).map(p => ({
+          'Nama': p.name,
+          'Harga': p.price,
+          'Stok': p.stock,
+          'Kategori': p.category_id,
+          'Status': p.is_active ? 'Aktif' : 'Non-aktif'
+        }))
         fileName = 'Laporan_Stok.xlsx'
       } else if (reportType === 'orders') {
         const { data: orders } = await supabase.from('orders').select('*')
-        data = orders || []
+        data = (orders || []).map(o => ({
+          'Order #': o.order_number,
+          'Total': o.total_amount,
+          'Dibayar': o.paid_amount,
+          'Kembalian': o.change_amount,
+          'Status': o.status,
+          'Tanggal': new Date(o.created_at).toLocaleString('id-ID')
+        }))
         fileName = 'Laporan_Pesanan.xlsx'
       }
       
@@ -37,6 +56,7 @@ export default function ReportsPage() {
       XLSX.writeFile(wb, fileName)
     } catch (err) {
       console.error(err)
+      alert('Error exporting: ' + err)
     } finally {
       setLoading(false)
     }
