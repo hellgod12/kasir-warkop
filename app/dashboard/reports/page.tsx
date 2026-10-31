@@ -19,7 +19,7 @@ export default function ReportsPage() {
       
       if (reportType === 'sales') {
         const { data: orders } = await supabase.from('orders').select('*')
-        data = (orders || []).map(o => ({
+        data = (orders || []).map((o: any) => ({
           'Order #': o.order_number,
           'Total': o.total_amount,
           'Status': o.status,
@@ -29,7 +29,7 @@ export default function ReportsPage() {
         fileName = 'Laporan_Penjualan.xlsx'
       } else if (reportType === 'inventory') {
         const { data: products } = await supabase.from('products').select('*')
-        data = (products || []).map(p => ({
+        data = (products || []).map((p: any) => ({
           'Nama': p.name,
           'Harga': p.price,
           'Stok': p.stock,
@@ -39,7 +39,7 @@ export default function ReportsPage() {
         fileName = 'Laporan_Stok.xlsx'
       } else if (reportType === 'orders') {
         const { data: orders } = await supabase.from('orders').select('*')
-        data = (orders || []).map(o => ({
+        data = (orders || []).map((o: any) => ({
           'Order #': o.order_number,
           'Total': o.total_amount,
           'Dibayar': o.paid_amount,
