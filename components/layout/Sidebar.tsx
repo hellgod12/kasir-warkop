@@ -21,6 +21,7 @@ export default function Sidebar() {
     { href: '/dashboard/orders', label: 'Pesanan' },
     { href: '/dashboard/shifts', label: 'Shift' },
     { href: '/dashboard/reports', label: 'Laporan' },
+    { href: '/dashboard/settings/tax', label: 'Pengaturan' },
   ]
 
   return (
