@@ -6,15 +6,15 @@ Sistem kasir warkop enterprise-grade dengan Next.js, Supabase, dan Vercel.
 
 ### Core Features:
 - ✅ **Login System** - Supabase Auth dengan admin@warkop.com / admin123
-- ✅ **Dashboard** - Modern UI dengan summary cards dan stats
-- ✅ **Branch Management** - Multi-cabang dengan CRUD
+- ✅ **Dashboard** - Modern UI dengan summary cards dan real-time stats
+- ✅ **Branch Management** - Multi-cabang dengan CRUD + validasi duplicate
 - ✅ **Category Management** - Kategori menu dengan CRUD
 - ✅ **Product Management** - CRUD produk dengan image upload
 - ✅ **POS System** - Category filter, cart, perhitungan otomatis
 - ✅ **Orders Management** - List pesanan dengan status tracking
-- ✅ **Shift Management** - Open/close shift, modal tracking
-- ✅ **Reports** - Excel export untuk penjualan, stok, pesanan
-- ✅ **Tax Settings** - PPN configuration (default 11%)
+- ✅ **Shift Management** - Open/close shift, modal tracking, jam/tanggal/durasi
+- ✅ **Reports** - Excel export profesional untuk penjualan, stok, pesanan
+- ✅ **Tax Settings** - PPN configuration (default 0%, bisa diatur)
 - ✅ **Modern UI** - Coffee/warkop theme dengan gradient dan emoji
 
 ### Technical:
@@ -33,6 +33,7 @@ Sistem kasir warkop enterprise-grade dengan Next.js, Supabase, dan Vercel.
 - ⏳ Supplier Management
 - ⏳ Advanced Inventory (alerts, COGS, wastage)
 - ⏳ Audit Trail
+- ⏳ Shift Transaction Details (list transaksi per shift)
 
 ### Tier 3 (Nice to Have):
 - ⏳ Delivery Management
