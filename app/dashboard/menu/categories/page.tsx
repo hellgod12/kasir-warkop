@@ -7,16 +7,22 @@ import { useRouter } from 'next/navigation'
 
 export default function CategoriesPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const [mounted, setMounted] = useState(false)
+  const supabase = mounted ? createClient() : null
   const [categories, setCategories] = useState<Category[]>([])
   const [newCategoryName, setNewCategoryName] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetchCategories()
+    setMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (mounted) fetchCategories()
+  }, [mounted])
+
   const fetchCategories = async () => {
+    if (!supabase) return
     const { data } = await supabase
       .from('categories')
       .select('*')
@@ -27,12 +33,13 @@ export default function CategoriesPage() {
   const addCategory = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newCategoryName.trim()) return
+    if (!supabase) return
 
     setLoading(true)
     const { error } = await supabase.from('categories').insert({
       name: newCategoryName,
       display_order: categories.length
-    })
+    } as any)
     
     if (!error) {
       setNewCategoryName('')

@@ -1,11 +1,19 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { signOut } from '@/app/auth/actions'
 import Link from 'next/link'
 
 export default function DashboardPage() {
-  const { user, profile } = useAuth()
+  const [mounted, setMounted] = useState(false)
+  const auth = mounted ? useAuth() : null
+  const user = auth?.user || null
+  const profile = auth?.profile || null
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSignOut = async () => {
     await signOut()

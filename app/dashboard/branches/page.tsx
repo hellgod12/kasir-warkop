@@ -7,16 +7,22 @@ import { useRouter } from 'next/navigation'
 
 export default function BranchesPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const [mounted, setMounted] = useState(false)
+  const supabase = mounted ? createClient() : null
   const [branches, setBranches] = useState<Branch[]>([])
   const [newBranchName, setNewBranchName] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetchBranches()
+    setMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (mounted) fetchBranches()
+  }, [mounted])
+
   const fetchBranches = async () => {
+    if (!supabase) return
     const { data } = await supabase
       .from('branches')
       .select('*')
@@ -27,12 +33,13 @@ export default function BranchesPage() {
   const addBranch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newBranchName.trim()) return
+    if (!supabase) return
 
     setLoading(true)
     const { error } = await supabase.from('branches').insert({
       name: newBranchName,
       is_active: true
-    })
+    } as any)
     
     if (!error) {
       setNewBranchName('')

@@ -13,7 +13,7 @@ export async function getCurrentUser(): Promise<Profile | null> {
     .eq('id', user.id)
     .single()
   
-  return profile
+  return profile || null
 }
 
 export async function getUserRole(): Promise<string | null> {

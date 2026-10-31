@@ -7,15 +7,21 @@ import { useRouter } from 'next/navigation'
 
 export default function MenuPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const [mounted, setMounted] = useState(false)
+  const supabase = mounted ? createClient() : null
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchProducts()
+    setMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (mounted) fetchProducts()
+  }, [mounted])
+
   const fetchProducts = async () => {
+    if (!supabase) return
     const { data } = await supabase
       .from('products')
       .select('*')

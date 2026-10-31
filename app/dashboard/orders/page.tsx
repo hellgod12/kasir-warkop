@@ -5,15 +5,21 @@ import { createClient } from '@/lib/supabase/client'
 import type { Order } from '@/types/database'
 
 export default function OrdersPage() {
-  const supabase = createClient()
+  const [mounted, setMounted] = useState(false)
+  const supabase = mounted ? createClient() : null
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchOrders()
+    setMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (mounted) fetchOrders()
+  }, [mounted])
+
   const fetchOrders = async () => {
+    if (!supabase) return
     const { data } = await supabase
       .from('orders')
       .select('*')

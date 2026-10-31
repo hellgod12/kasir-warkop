@@ -15,6 +15,7 @@ export type ProfileInsert = Db['public']['Tables']['profiles']['Insert']
 export type ProductInsert = Db['public']['Tables']['products']['Insert']
 export type OrderInsert = Db['public']['Tables']['orders']['Insert']
 export type OrderItemInsert = Db['public']['Tables']['order_items']['Insert']
+export type CategoryInsert = Db['public']['Tables']['categories']['Insert']
 
 export type BranchUpdate = Db['public']['Tables']['branches']['Update']
 export type ProfileUpdate = Db['public']['Tables']['profiles']['Update']

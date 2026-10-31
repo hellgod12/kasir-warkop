@@ -4,18 +4,17 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { ProductInsert, Category } from '@/types/database'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth/auth-context'
 
 export default function NewProductPage() {
   const router = useRouter()
-  const { profile } = useAuth()
-  const supabase = createClient()
+  const [mounted, setMounted] = useState(false)
+  const supabase = mounted ? createClient() : null
   
   const [formData, setFormData] = useState<ProductInsert>({
     name: '',
     description: '',
     category_id: '',
-    branch_id: profile?.branch_id || '',
+    branch_id: '',
     price: 0,
     cost_price: 0,
     stock: 0,
@@ -29,10 +28,15 @@ export default function NewProductPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetchCategories()
+    setMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (mounted) fetchCategories()
+  }, [mounted])
+
   const fetchCategories = async () => {
+    if (!supabase) return
     const { data } = await supabase
       .from('categories')
       .select('*')
@@ -47,7 +51,8 @@ export default function NewProductPage() {
     setError('')
 
     try {
-      const { error } = await supabase.from('products').insert(formData)
+      if (!supabase) throw new Error('Supabase not available')
+      const { error } = await supabase.from('products').insert(formData as any)
       
       if (error) throw error
       

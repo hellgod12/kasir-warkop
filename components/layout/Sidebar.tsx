@@ -2,11 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@/lib/auth/auth-context'
+import { useEffect, useState } from 'react'
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { profile } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -33,10 +37,6 @@ export default function Sidebar() {
           </Link>
         ))}
       </nav>
-      <div className="mt-8 pt-8 border-t border-gray-700">
-        <p className="text-gray-400 text-sm">{profile?.full_name}</p>
-        <p className="text-gray-500 text-xs">{profile?.role}</p>
-      </div>
     </div>
   )
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth/auth-context";
+
+const AuthProviderWrapper = dynamic(() => import('@/components/layout/AuthProviderWrapper'))
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>
+        <AuthProviderWrapper>
           {children}
-        </AuthProvider>
+        </AuthProviderWrapper>
       </body>
     </html>
   );
