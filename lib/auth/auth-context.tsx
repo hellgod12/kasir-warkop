@@ -30,6 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!supabase) return
 
+    // Add timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 5000) // 5 second timeout
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
       if (user) {
@@ -51,23 +56,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
   }, [supabase])
 
   const fetchProfile = async (userId: string) => {
     if (!supabase) return
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    
-    if (error) {
-      console.error('Error fetching profile:', error)
-    } else {
-      setProfile(data)
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      
+      if (error) {
+        console.error('Error fetching profile:', error)
+        // Don't set loading to false on error, let timeout handle it
+      } else {
+        setProfile(data)
+      }
+    } catch (err) {
+      console.error('Error in fetchProfile:', err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const refresh = async () => {
